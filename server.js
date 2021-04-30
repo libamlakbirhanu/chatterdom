@@ -1,0 +1,29 @@
+const express = require('express');
+const http = require('http');
+const socket = require('socket.io');
+const messages = require('./utils/messages');
+
+const app = express();
+const server = http.createServer(app);
+const io = socket(server);
+const PORT = process.env.port || 3000;
+
+app.use(express.static('public'));
+
+io.on('connection', (socket) => {
+	socket.on('join', ({ username, room }) => {
+		socket.emit('room', room);
+		socket.emit('message', messages('admin', 'welcome to the room'));
+		socket.on('chatMessage', (msg) => {
+			io.emit('message', messages(username, msg));
+		});
+	});
+
+	socket.on('disconnect', () => {
+		io.emit('message', messages('admin', 'Client left the room!'));
+	});
+});
+
+server.listen(PORT, () => {
+	console.log('server running on port number', PORT);
+});
