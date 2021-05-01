@@ -17,9 +17,10 @@ io.on('connection', (socket) => {
 		addUser(socket.id, username, room);
 		socket.broadcast
 			.to(room)
-			.emit('message', messages('admin', `${username} connected!`));
-		io.to(room).emit('users', users);
-		socket.emit('message', messages('admin', 'welcome to the room'));
+			.emit('message', messages('admin', `${username} joined the room!`));
+		const roomUsers = getRoomUsers(room);
+		io.emit('users', roomUsers);
+		socket.emit('message', messages('admin', 'welcome to the room!'));
 		socket.on('chatMessage', (msg) => {
 			io.to(room).emit('message', messages(username, msg));
 		});
@@ -28,7 +29,11 @@ io.on('connection', (socket) => {
 		const user = getCurrentUser(socket.id);
 		const index = users.indexOf(user);
 		users.splice(index, 1);
-		io.to(user.room).emit('users', users);
+		const roomUsers = getRoomUsers(user.room);
+		io.to(user.room).emit('users', roomUsers);
+		socket.broadcast
+			.to(user.room)
+			.emit('message', messages('admin', `${user.username} left the room!`));
 	});
 });
 
