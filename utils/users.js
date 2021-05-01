@@ -20,4 +20,5 @@ module.exports = {
 	addUser,
 	getCurrentUser,
 	users,
+	getRoomUsers,
 };

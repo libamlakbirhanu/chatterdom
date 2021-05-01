@@ -2,7 +2,12 @@ const express = require('express');
 const http = require('http');
 const socket = require('socket.io');
 const messages = require('./utils/messages');
-const { addUser, getCurrentUser, users } = require('./utils/users');
+const {
+	addUser,
+	getCurrentUser,
+	users,
+	getRoomUsers,
+} = require('./utils/users');
 
 const app = express();
 const server = http.createServer(app);
@@ -19,7 +24,7 @@ io.on('connection', (socket) => {
 			.to(room)
 			.emit('message', messages('admin', `${username} joined the room!`));
 		const roomUsers = getRoomUsers(room);
-		io.emit('users', roomUsers);
+		io.to(room).emit('users', roomUsers);
 		socket.emit('message', messages('admin', 'welcome to the room!'));
 		socket.on('chatMessage', (msg) => {
 			io.to(room).emit('message', messages(username, msg));
