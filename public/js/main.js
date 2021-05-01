@@ -9,8 +9,14 @@ const socket = io();
 
 socket.emit('join', { username, room });
 
-socket.on('room', (room) => {
-	document.querySelector('#room-name').innerHTML = room;
+socket.on('users', (users) => {
+	document.querySelector('#users').innerHTML = '';
+	users.map((user) => {
+		const username = document.createElement('li');
+		username.innerHTML = user.username;
+		document.querySelector('#users').appendChild(username);
+		document.querySelector('#room-name').innerHTML = user.room;
+	});
 });
 
 socket.on('message', (message) => {
