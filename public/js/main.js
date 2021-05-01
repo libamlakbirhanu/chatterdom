@@ -10,11 +10,11 @@ const socket = io();
 
 socket.emit('join', { username, room });
 
-socket.on('users', ({ users, room }) => {
-	userList.innerHTML = users
+socket.on('users', (roomUsers) => {
+	userList.innerHTML = roomUsers
 		.map((user) => `<li>${user.username}</li>`)
 		.join('');
-	document.querySelector('#room-name').innerHTML = room;
+	document.querySelector('#room-name').innerHTML = roomUsers[0].room;
 });
 
 socket.on('message', (message) => {
