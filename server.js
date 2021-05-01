@@ -24,7 +24,7 @@ io.on('connection', (socket) => {
 			.to(room)
 			.emit('message', messages('admin', `${username} joined the room!`));
 		const roomUsers = getRoomUsers(room);
-		io.to(room).emit('users', roomUsers);
+		io.to(room).emit('users', { roomUsers, room });
 		socket.emit('message', messages('admin', 'welcome to the room!'));
 		socket.on('chatMessage', (msg) => {
 			io.to(room).emit('message', messages(username, msg));
